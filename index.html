@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NivoraHQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">N</span>
+    <div class="brand-text">
+      <h1>NivoraHQ</h1>
+      <p>clássicos sombrios, histórias que marcaram</p>
+    </div>
+  </div>
+  <button class="cart-btn" id="cartBtn">
+    Carrinho
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<section class="hero">
+  <h2>Histórias que moldaram os quadrinhos.</h2>
+  <p>Uma seleção enxuta de clássicos de DC, Vertigo, Image e Dark Horse — obras que redefiniram o que uma HQ pode ser. Ache, adicione, finalize.</p>
+</section>
+
+<section class="controls">
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Buscar por título...">
+  </div>
+  <div class="categories" id="categoryButtons"></div>
+</section>
+
+<main>
+  <div id="emptySearch" class="empty-state hidden">
+    Nenhuma HQ encontrada com esse nome. Tenta outro título.
+  </div>
+  <section class="product-grid" id="productGrid"></section>
+</main>
+
+<div class="cart-overlay" id="cartOverlay">
+  <aside class="cart-panel">
+    <div class="cart-header">
+      <h3>Seu carrinho</h3>
+      <button class="close-btn" id="closeCart">fechar</button>
+    </div>
+
+    <div id="cartEmptyMsg" class="cart-empty hidden">
+      Seu carrinho está vazio. Bora escolher uma HQ.
+    </div>
+
+    <div class="cart-items" id="cartItems"></div>
+
+    <div class="cart-summary">
+      <div class="summary-row">
+        <span>Itens</span>
+        <span id="summaryQtd">0</span>
+      </div>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="summarySubtotal">R$ 0,00</span>
+      </div>
+      <div class="summary-row discount-row" id="discountRow">
+        <span>Desconto</span>
+        <span id="summaryDiscount">- R$ 0,00</span>
+      </div>
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <span id="summaryTotal">R$ 0,00</span>
+      </div>
+      <p class="discount-hint" id="discountHint"></p>
+      <button class="checkout-btn" id="checkoutBtn">Finalizar compra</button>
+    </div>
+  </aside>
+</div>
+
+<div class="modal-overlay" id="successOverlay">
+  <div class="success-modal">
+    <span class="success-mark">POW!</span>
+    <h3>Compra concluída com sucesso</h3>
+    <p id="successDetails"></p>
+    <button class="close-btn solid" id="closeSuccess">continuar comprando</button>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
