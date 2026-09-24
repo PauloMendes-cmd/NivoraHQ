@@ -11,6 +11,18 @@ class Produto {
   estaDisponivel() {
     return this.estoque > 0;
   }
+
+  reduzirEstoque(quantidade) {
+    if (quantidade <= this.estoque) {
+      this.estoque = this.estoque - quantidade;
+      return true;
+    }
+    return false;
+  }
+
+  aumentarEstoque(quantidade) {
+    this.estoque = this.estoque + quantidade;
+  }
 }
 
 class ItemCarrinho {
@@ -19,7 +31,7 @@ class ItemCarrinho {
     this.quantidade = quantidade;
   }
 
-  get subtotal() {
+  calcularSubtotal() {
     return this.produto.preco * this.quantidade;
   }
 }
@@ -27,25 +39,32 @@ class ItemCarrinho {
 class Carrinho {
   constructor() {
     this.itens = [];
+    this.cupom = null;
   }
 
-  encontrarItem(codigo) {
-    let indice = 0;
-    let encontrado = null;
-    while (indice < this.itens.length) {
-      if (this.itens[indice].produto.codigo === codigo) {
-        encontrado = this.itens[indice];
-        indice = this.itens.length;
-      } else {
-        indice = indice + 1;
-      }
+  aplicarCupom(codigo) {
+    const codigoNormalizado = codigo.trim().toUpperCase();
+    if (codigoNormalizado === "TECHNOVA5") {
+      this.cupom = codigoNormalizado;
+      return true;
     }
-    return encontrado;
+    return false;
+  }
+
+  removerCupom() {
+    this.cupom = null;
   }
 
   adicionarProduto(produto, quantidade) {
-    const itemExistente = this.encontrarItem(produto.codigo);
-    if (itemExistente) {
+    let itemExistente = null;
+
+    for (let i = 0; i < this.itens.length; i++) {
+      if (this.itens[i].produto.codigo === produto.codigo) {
+        itemExistente = this.itens[i];
+      }
+    }
+
+    if (itemExistente !== null) {
       const novaQuantidade = itemExistente.quantidade + quantidade;
       if (novaQuantidade > produto.estoque) {
         return false;
@@ -61,365 +80,478 @@ class Carrinho {
   }
 
   removerProduto(codigo) {
-    const itensRestantes = [];
-    for (let i = 0; i < this.itens.length; i++) {
-      if (this.itens[i].produto.codigo !== codigo) {
-        itensRestantes.push(this.itens[i]);
-      }
-    }
-    this.itens = itensRestantes;
+    this.itens = this.itens.filter((item) => item.produto.codigo !== codigo);
   }
 
   alterarQuantidade(codigo, novaQuantidade) {
-    const item = this.encontrarItem(codigo);
-    if (!item) {
-      return false;
+    for (let i = 0; i < this.itens.length; i++) {
+      if (this.itens[i].produto.codigo === codigo) {
+        if (novaQuantidade <= 0) {
+          this.removerProduto(codigo);
+          return true;
+        }
+        if (novaQuantidade > this.itens[i].produto.estoque) {
+          return false;
+        }
+        this.itens[i].quantidade = novaQuantidade;
+        return true;
+      }
     }
-    if (novaQuantidade <= 0) {
-      this.removerProduto(codigo);
-      return true;
-    }
-    if (novaQuantidade > item.produto.estoque) {
-      return false;
-    }
-    item.quantidade = novaQuantidade;
-    return true;
-  }
-
-  estaVazio() {
-    return this.itens.length === 0;
+    return false;
   }
 
   calcularQuantidadeTotal() {
     let total = 0;
-    for (let i = 0; i < this.itens.length; i++) {
-      total = total + this.itens[i].quantidade;
+    let i = 0;
+    while (i < this.itens.length) {
+      total += this.itens[i].quantidade;
+      i++;
     }
     return total;
   }
 
   calcularSubtotal() {
     let subtotal = 0;
-    for (let i = 0; i < this.itens.length; i++) {
-      subtotal = subtotal + this.itens[i].subtotal;
+    for (const item of this.itens) {
+      subtotal += item.calcularSubtotal();
     }
     return subtotal;
   }
 
   calcularDesconto() {
     const subtotal = this.calcularSubtotal();
-    const limiteParaDesconto = 300;
-    const percentualDesconto = 0.1;
-    if (subtotal >= limiteParaDesconto) {
-      return subtotal * percentualDesconto;
-    } else {
-      return 0;
+    let percentualDesconto = 0;
+
+    if (subtotal >= 3000) {
+      percentualDesconto += 0.10;
     }
+    if (this.cupom === "TECHNOVA5") {
+      percentualDesconto += 0.05;
+    }
+
+    return subtotal * percentualDesconto;
   }
 
   calcularTotal() {
     return this.calcularSubtotal() - this.calcularDesconto();
   }
 
-  esvaziar() {
+  estaVazio() {
+    return this.itens.length === 0;
+  }
+
+  limpar() {
     this.itens = [];
+    this.cupom = null;
   }
 }
 
-var produtos = [
-  new Produto("HQ001", "Batman: Ano Um", "DC", 39.9, 0, "images/hq001.svg"),
-  new Produto("HQ002", "Watchmen", "DC", 45.9, 6, "images/hq002.svg"),
-  new Produto("HQ003", "Hellboy: Semente da Destruição", "Dark Horse", 37.9, 5, "images/hq003.svg"),
-  new Produto("HQ004", "Saga", "Image", 34.9, 9, "images/hq004.svg"),
-  new Produto("HQ005", "Sandman: Prelúdios e Noturnos", "DC", 52.0, 4, "images/hq005.svg"),
-  new Produto("HQ006", "Invencível", "Image", 29.9, 10, "images/hq006.svg"),
-  new Produto("HQ007", "V de Vingança", "DC", 42.5, 3, "images/hq007.svg")
+const produtos = [
+  new Produto(1, "Notebook Gamer Pro", "Informática", 4500.00, 5, "images/notebook.jpg"),
+  new Produto(2, "Mouse Gamer RGB", "Informática", 150.00, 20, "images/mouse.jpg"),
+  new Produto(3, "Console X-Play", "Games", 3000.00, 0, "images/console.jpg"),
+  new Produto(4, "Controle Sem Fio", "Games", 250.00, 15, "images/controle.jpg"),
+  new Produto(5, "Headset Gamer", "Acessórios", 350.00, 10, "images/headset.jpg"),
+  new Produto(6, "Cadeira Gamer", "Acessórios", 1200.00, 3, "images/cadeira.jpg"),
 ];
 
 const carrinho = new Carrinho();
 
-let categoriaAtiva = "Todos";
+let categoriaSelecionada = "Todos";
 let termoBusca = "";
+let criterioOrdenacao = "relevancia";
+let temporizadorToast = null;
+const CHAVE_ARMAZENAMENTO = "technova-carrinho";
 
-const productGrid = document.getElementById("productGrid");
-const categoryButtons = document.getElementById("categoryButtons");
-const searchInput = document.getElementById("searchInput");
-const emptySearch = document.getElementById("emptySearch");
-const cartBtn = document.getElementById("cartBtn");
-const cartCount = document.getElementById("cartCount");
-const cartOverlay = document.getElementById("cartOverlay");
-const closeCart = document.getElementById("closeCart");
-const cartItemsEl = document.getElementById("cartItems");
-const cartEmptyMsg = document.getElementById("cartEmptyMsg");
-const summaryQtd = document.getElementById("summaryQtd");
-const summarySubtotal = document.getElementById("summarySubtotal");
-const summaryDiscount = document.getElementById("summaryDiscount");
-const summaryTotal = document.getElementById("summaryTotal");
-const discountRow = document.getElementById("discountRow");
-const discountHint = document.getElementById("discountHint");
-const checkoutBtn = document.getElementById("checkoutBtn");
-const successOverlay = document.getElementById("successOverlay");
-const successDetails = document.getElementById("successDetails");
-const closeSuccess = document.getElementById("closeSuccess");
-
-const formatarPreco = (valor) => {
+function formatarMoeda(valor) {
   return "R$ " + valor.toFixed(2).replace(".", ",");
-};
+}
+
+function obterIniciais(nome) {
+  const palavras = nome.split(" ");
+  let iniciais = "";
+  for (let i = 0; i < palavras.length && i < 2; i++) {
+    iniciais += palavras[i].charAt(0);
+  }
+  return iniciais.toUpperCase();
+}
+
+function mostrarToast(mensagem, tipo = "sucesso") {
+  const toast = document.getElementById("toast");
+  toast.textContent = mensagem;
+  toast.className = "toast toast-" + tipo + " visivel";
+
+  clearTimeout(temporizadorToast);
+  temporizadorToast = setTimeout(() => {
+    toast.classList.remove("visivel");
+  }, 2600);
+}
+
+function animarBadge() {
+  const badge = document.getElementById("contador-carrinho");
+  badge.classList.remove("bump");
+  void badge.offsetWidth;
+  badge.classList.add("bump");
+}
 
 function obterCategorias() {
-  const lista = ["Todos"];
-  for (let i = 0; i < produtos.length; i++) {
-    const categoria = produtos[i].categoria;
-    if (!lista.includes(categoria)) {
-      lista.push(categoria);
+  const categorias = ["Todos"];
+  for (const produto of produtos) {
+    if (!categorias.includes(produto.categoria)) {
+      categorias.push(produto.categoria);
     }
   }
-  return lista;
+  return categorias;
 }
 
 function renderizarCategorias() {
+  const container = document.getElementById("lista-categorias");
+  container.innerHTML = "";
   const categorias = obterCategorias();
-  categoryButtons.innerHTML = "";
-  for (let i = 0; i < categorias.length; i++) {
-    const categoria = categorias[i];
+
+  for (const categoria of categorias) {
     const botao = document.createElement("button");
-    botao.className = "category-btn";
+    botao.className = "botao-categoria" + (categoria === categoriaSelecionada ? " ativo" : "");
     botao.textContent = categoria;
-    if (categoria === categoriaAtiva) {
-      botao.classList.add("active");
-    }
-    botao.addEventListener("click", function () {
-      categoriaAtiva = categoria;
+    botao.addEventListener("click", () => {
+      categoriaSelecionada = categoria;
       renderizarCategorias();
       renderizarProdutos();
     });
-    categoryButtons.appendChild(botao);
+    container.appendChild(botao);
   }
 }
 
 function filtrarProdutos() {
   const resultado = [];
-  for (let i = 0; i < produtos.length; i++) {
+
+  for (var i = 0; i < produtos.length; i++) {
     const produto = produtos[i];
-    const combinaCategoria = categoriaAtiva === "Todos" || produto.categoria === categoriaAtiva;
+    const combinaCategoria = categoriaSelecionada === "Todos" || produto.categoria === categoriaSelecionada;
     const combinaBusca = produto.nome.toLowerCase().includes(termoBusca.toLowerCase());
+
     if (combinaCategoria && combinaBusca) {
       resultado.push(produto);
     }
   }
+
   return resultado;
 }
 
-function criarCardProduto(produto) {
-  const card = document.createElement("article");
-  card.className = "product-card";
+function ordenarProdutos(lista) {
+  const copia = [...lista];
+
+  if (criterioOrdenacao === "menor-preco") {
+    copia.sort((a, b) => a.preco - b.preco);
+  } else if (criterioOrdenacao === "maior-preco") {
+    copia.sort((a, b) => b.preco - a.preco);
+  } else if (criterioOrdenacao === "nome") {
+    copia.sort((a, b) => a.nome.localeCompare(b.nome));
+  }
+
+  return copia;
+}
+
+function criarCardProduto(produto, indice) {
+  const card = document.createElement("div");
+  card.className = "card-produto";
+  card.style.animationDelay = (indice * 60) + "ms";
 
   const disponivel = produto.estaDisponivel();
-  const statusTexto = disponivel ? produto.estoque + " em estoque" : "Indisponível";
-  const statusClasse = disponivel ? "stock-ok" : "stock-out";
+  const estoqueBaixo = disponivel && produto.estoque <= 3;
+  const codigoFormatado = "TN-" + String(produto.codigo).padStart(3, "0");
 
   card.innerHTML = `
-    <img src="${produto.imagem}" alt="${produto.nome}">
-    <div class="product-body">
-      <span class="product-category">${produto.categoria}</span>
-      <h3 class="product-name">${produto.nome}</h3>
-      <span class="product-price">${formatarPreco(produto.preco)}</span>
-      <span class="product-stock ${statusClasse}">${statusTexto}</span>
-      <button class="add-btn" ${disponivel ? "" : "disabled"}>${disponivel ? "Adicionar ao carrinho" : "Esgotado"}</button>
+    <div class="card-imagem-wrap" data-iniciais="${obterIniciais(produto.nome)}">
+      <img class="card-imagem" src="${produto.imagem}" alt="${produto.nome}" loading="lazy" />
+      <span class="card-sku">${codigoFormatado}</span>
+      ${!disponivel ? '<span class="card-selo-indisponivel">Esgotado</span>' : ""}
+      ${estoqueBaixo ? `<span class="card-selo-baixo">Últimas ${produto.estoque}!</span>` : ""}
+    </div>
+    <div class="card-info">
+      <span class="card-categoria">${produto.categoria}</span>
+      <span class="card-nome">${produto.nome}</span>
+      <span class="card-preco">${formatarMoeda(produto.preco)}</span>
+      <span class="card-estoque ${disponivel ? "" : "indisponivel"}">
+        ${disponivel ? produto.estoque + " em estoque" : "Indisponível"}
+      </span>
+      <button class="botao-adicionar" ${disponivel ? "" : "disabled"}>
+        ${disponivel ? "Adicionar ao carrinho" : "Indisponível"}
+      </button>
     </div>
   `;
 
-  const botaoAdicionar = card.querySelector(".add-btn");
-  botaoAdicionar.addEventListener("click", function () {
-    const adicionou = adicionarAoCarrinho(produto.codigo);
-    if (adicionou) {
-      botaoAdicionar.classList.remove("added");
-      void botaoAdicionar.offsetWidth;
-      botaoAdicionar.classList.add("added");
-    }
+  const imagem = card.querySelector(".card-imagem");
+  imagem.addEventListener("load", () => imagem.classList.add("carregada"));
+  imagem.addEventListener("error", () => {
+    card.querySelector(".card-imagem-wrap").classList.add("sem-imagem");
+    imagem.remove();
   });
+
+  const botao = card.querySelector(".botao-adicionar");
+  if (disponivel) {
+    botao.addEventListener("click", () => adicionarAoCarrinho(produto.codigo));
+  }
 
   return card;
 }
 
 function renderizarProdutos() {
-  const listaFiltrada = filtrarProdutos();
-  productGrid.innerHTML = "";
+  const lista = document.getElementById("lista-produtos");
+  const mensagemBusca = document.getElementById("mensagem-busca");
+  lista.innerHTML = "";
 
-  if (listaFiltrada.length === 0) {
-    emptySearch.classList.remove("hidden");
+  const produtosFiltrados = ordenarProdutos(filtrarProdutos());
+
+  if (produtosFiltrados.length === 0) {
+    mensagemBusca.textContent = "Nenhum produto encontrado para essa busca.";
+    mensagemBusca.classList.add("visivel");
     return;
   }
 
-  emptySearch.classList.add("hidden");
+  mensagemBusca.textContent = "";
+  mensagemBusca.classList.remove("visivel");
 
-  for (let i = 0; i < listaFiltrada.length; i++) {
-    const card = criarCardProduto(listaFiltrada[i]);
-    card.style.animationDelay = (i * 0.06) + "s";
-    productGrid.appendChild(card);
+  for (let i = 0; i < produtosFiltrados.length; i++) {
+    lista.appendChild(criarCardProduto(produtosFiltrados[i], i));
   }
 }
 
-function adicionarAoCarrinho(codigo) {
-  const produto = produtos.find(function (item) {
-    return item.codigo === codigo;
-  });
-
+const adicionarAoCarrinho = (codigo) => {
+  const produto = produtos.find((p) => p.codigo === codigo);
   if (!produto || !produto.estaDisponivel()) {
-    return false;
+    return;
   }
-
   const sucesso = carrinho.adicionarProduto(produto, 1);
   if (!sucesso) {
-    alert("Quantidade máxima em estoque já está no carrinho.");
-    return false;
+    mostrarToast("Quantidade máxima em estoque atingida.", "erro");
+    return;
   }
+  mostrarToast(produto.nome + " adicionado ao carrinho.");
+  atualizarInterfaceCarrinho();
+};
 
-  atualizarInterface();
-  return true;
+const aumentarQuantidade = (codigo) => {
+  const item = carrinho.itens.find((i) => i.produto.codigo === codigo);
+  if (!item) return;
+  const sucesso = carrinho.alterarQuantidade(codigo, item.quantidade + 1);
+  if (!sucesso) {
+    mostrarToast("Estoque insuficiente para aumentar a quantidade.", "erro");
+    return;
+  }
+  atualizarInterfaceCarrinho();
+};
+
+const diminuirQuantidade = (codigo) => {
+  const item = carrinho.itens.find((i) => i.produto.codigo === codigo);
+  if (!item) return;
+  carrinho.alterarQuantidade(codigo, item.quantidade - 1);
+  atualizarInterfaceCarrinho();
+};
+
+function removerDoCarrinho(codigo) {
+  carrinho.removerProduto(codigo);
+  atualizarInterfaceCarrinho();
 }
 
-function criarLinhaCarrinho(item) {
-  const linha = document.createElement("div");
-  linha.className = "cart-item";
-
-  linha.innerHTML = `
-    <img src="${item.produto.imagem}" alt="${item.produto.nome}">
-    <div class="cart-item-info">
-      <span class="cart-item-name">${item.produto.nome}</span>
-      <span class="cart-item-unit">${formatarPreco(item.produto.preco)} cada</span>
-      <div class="qty-controls">
-        <button class="qty-minus">-</button>
-        <span class="qty-value">${item.quantidade}</span>
-        <button class="qty-plus">+</button>
-      </div>
-      <span class="cart-item-subtotal">${formatarPreco(item.subtotal)}</span>
-      <button class="remove-btn">remover</button>
-    </div>
-  `;
-
-  const botaoMenos = linha.querySelector(".qty-minus");
-  const botaoMais = linha.querySelector(".qty-plus");
-  const botaoRemover = linha.querySelector(".remove-btn");
-
-  botaoMenos.addEventListener("click", function () {
-    carrinho.alterarQuantidade(item.produto.codigo, item.quantidade - 1);
-    atualizarInterface();
-  });
-
-  botaoMais.addEventListener("click", function () {
-    const conseguiu = carrinho.alterarQuantidade(item.produto.codigo, item.quantidade + 1);
-    if (!conseguiu) {
-      alert("Estoque insuficiente para aumentar a quantidade.");
-    }
-    atualizarInterface();
-  });
-
-  botaoRemover.addEventListener("click", function () {
-    carrinho.removerProduto(item.produto.codigo);
-    atualizarInterface();
-  });
-
-  return linha;
-}
-
-function renderizarCarrinho() {
-  cartItemsEl.innerHTML = "";
+function renderizarItensCarrinho() {
+  const container = document.getElementById("itens-carrinho");
+  container.innerHTML = "";
 
   if (carrinho.estaVazio()) {
-    cartEmptyMsg.classList.remove("hidden");
-  } else {
-    cartEmptyMsg.classList.add("hidden");
-    for (let i = 0; i < carrinho.itens.length; i++) {
-      const linha = criarLinhaCarrinho(carrinho.itens[i]);
-      cartItemsEl.appendChild(linha);
-    }
+    container.innerHTML = `
+      <div class="carrinho-vazio">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="19" cy="21" r="1"></circle>
+          <path d="M2 3h2l2.4 12.2a2 2 0 0 0 2 1.8h9.2a2 2 0 0 0 2-1.6L22 8H6"></path>
+        </svg>
+        <strong>Seu carrinho está vazio.</strong>
+        <span>Adicione produtos para continuar.</span>
+      </div>
+    `;
+    return;
+  }
+
+  for (const item of carrinho.itens) {
+    const linha = document.createElement("div");
+    linha.className = "item-carrinho";
+    linha.innerHTML = `
+      <div class="item-info">
+        <div class="item-nome">${item.produto.nome}</div>
+        <div class="item-preco">${formatarMoeda(item.produto.preco)} un. · Subtotal: ${formatarMoeda(item.calcularSubtotal())}</div>
+      </div>
+      <div class="item-controles">
+        <button class="botao-diminuir">-</button>
+        <span>${item.quantidade}</span>
+        <button class="botao-aumentar">+</button>
+        <button class="item-remover">🗑️</button>
+      </div>
+    `;
+
+    linha.querySelector(".botao-aumentar").addEventListener("click", () => aumentarQuantidade(item.produto.codigo));
+    linha.querySelector(".botao-diminuir").addEventListener("click", () => diminuirQuantidade(item.produto.codigo));
+    linha.querySelector(".item-remover").addEventListener("click", () => removerDoCarrinho(item.produto.codigo));
+
+    container.appendChild(linha);
   }
 }
 
-function atualizarResumo() {
-  const quantidadeTotal = carrinho.calcularQuantidadeTotal();
+function atualizarBarraDesconto() {
+  const meta = 3000;
   const subtotal = carrinho.calcularSubtotal();
-  const desconto = carrinho.calcularDesconto();
-  const total = carrinho.calcularTotal();
+  const progresso = Math.min((subtotal / meta) * 100, 100);
+  const barra = document.getElementById("barra-desconto-preenchimento");
+  const mensagem = document.getElementById("mensagem-desconto");
 
-  summaryQtd.textContent = quantidadeTotal;
-  summarySubtotal.textContent = formatarPreco(subtotal);
-  summaryDiscount.textContent = "- " + formatarPreco(desconto);
-  summaryTotal.textContent = formatarPreco(total);
+  barra.style.width = progresso + "%";
 
-  if (desconto > 0) {
-    discountRow.classList.remove("hidden");
-    discountHint.textContent = "Desconto de 10% aplicado para compras acima de R$ 300,00.";
-    discountHint.classList.add("glow");
+  if (subtotal >= meta) {
+    mensagem.textContent = "Desconto de 10% aplicado no subtotal!";
+    mensagem.classList.add("atingido");
   } else {
-    discountRow.classList.add("hidden");
-    discountHint.classList.remove("glow");
-    const faltam = 300 - subtotal;
-    if (subtotal > 0 && faltam > 0) {
-      discountHint.textContent = "Faltam " + formatarPreco(faltam) + " para ganhar 10% de desconto.";
-    } else {
-      discountHint.textContent = "Compras a partir de R$ 300,00 ganham 10% de desconto.";
+    mensagem.textContent = "Faltam " + formatarMoeda(meta - subtotal) + " para o desconto de 10%.";
+    mensagem.classList.remove("atingido");
+  }
+}
+
+function salvarCarrinho() {
+  const dados = [];
+  for (const item of carrinho.itens) {
+    dados.push({ codigo: item.produto.codigo, quantidade: item.quantidade });
+  }
+  localStorage.setItem(CHAVE_ARMAZENAMENTO, JSON.stringify(dados));
+}
+
+function restaurarCarrinho() {
+  const dadosSalvos = localStorage.getItem(CHAVE_ARMAZENAMENTO);
+  if (!dadosSalvos) {
+    return;
+  }
+
+  let itensSalvos = [];
+  try {
+    itensSalvos = JSON.parse(dadosSalvos);
+  } catch (erro) {
+    return;
+  }
+
+  for (const itemSalvo of itensSalvos) {
+    const produto = produtos.find((p) => p.codigo === itemSalvo.codigo);
+    if (produto) {
+      const quantidadePossivel = Math.min(itemSalvo.quantidade, produto.estoque);
+      if (quantidadePossivel > 0) {
+        carrinho.adicionarProduto(produto, quantidadePossivel);
+      }
     }
   }
+}
 
-  if (cartCount.textContent !== String(quantidadeTotal)) {
-    cartCount.textContent = quantidadeTotal;
-    cartCount.classList.remove("bump");
-    void cartCount.offsetWidth;
-    cartCount.classList.add("bump");
+function aplicarCupom() {
+  const campo = document.getElementById("campo-cupom");
+  const codigo = campo.value;
+
+  if (carrinho.estaVazio()) {
+    mostrarToast("Adicione produtos antes de aplicar um cupom.", "erro");
+    return;
+  }
+
+  const sucesso = carrinho.aplicarCupom(codigo);
+  if (sucesso) {
+    mostrarToast("Cupom aplicado: 5% de desconto extra.");
+    campo.value = "";
+    atualizarInterfaceCarrinho();
+  } else {
+    mostrarToast("Cupom inválido.", "erro");
   }
 }
 
-function atualizarInterface() {
-  renderizarProdutos();
-  renderizarCarrinho();
-  atualizarResumo();
+function atualizarResumoCarrinho() {
+  document.getElementById("qtd-itens").textContent = carrinho.calcularQuantidadeTotal();
+  document.getElementById("valor-subtotal").textContent = formatarMoeda(carrinho.calcularSubtotal());
+  document.getElementById("valor-desconto").textContent = formatarMoeda(carrinho.calcularDesconto());
+  document.getElementById("valor-total").textContent = formatarMoeda(carrinho.calcularTotal());
+  document.getElementById("contador-carrinho").textContent = carrinho.calcularQuantidadeTotal();
+  animarBadge();
+  atualizarBarraDesconto();
+  salvarCarrinho();
+
+  const botaoFinalizar = document.getElementById("botao-finalizar");
+  botaoFinalizar.disabled = carrinho.estaVazio();
 }
 
-const abrirCarrinho = () => {
-  cartOverlay.classList.add("open");
-};
-
-const fecharCarrinho = () => {
-  cartOverlay.classList.remove("open");
-};
+function atualizarInterfaceCarrinho() {
+  renderizarItensCarrinho();
+  atualizarResumoCarrinho();
+  renderizarProdutos();
+}
 
 function finalizarCompra() {
   if (carrinho.estaVazio()) {
-    alert("Seu carrinho está vazio. Adicione ao menos uma HQ antes de finalizar.");
+    mostrarToast("Carrinho vazio: adicione produtos antes de finalizar.", "erro");
     return;
   }
 
-  const quantidadeTotal = carrinho.calcularQuantidadeTotal();
-  const total = carrinho.calcularTotal();
+  let resumoHtml = "";
+  for (const item of carrinho.itens) {
+    resumoHtml += `<p>${item.quantidade}x ${item.produto.nome} — ${formatarMoeda(item.calcularSubtotal())}</p>`;
+    item.produto.reduzirEstoque(item.quantidade);
+  }
+  resumoHtml += `<p><strong>Subtotal: ${formatarMoeda(carrinho.calcularSubtotal())}</strong></p>`;
+  resumoHtml += `<p><strong>Desconto: ${formatarMoeda(carrinho.calcularDesconto())}</strong></p>`;
+  resumoHtml += `<p><strong>Total pago: ${formatarMoeda(carrinho.calcularTotal())}</strong></p>`;
 
-  successDetails.textContent = quantidadeTotal + " item(ns) confirmados, total de " + formatarPreco(total) + ". Bom proveito da leitura!";
-  successOverlay.classList.add("open");
+  document.getElementById("resumo-final").innerHTML = resumoHtml;
+  document.getElementById("modal-sucesso").classList.add("visivel");
 
-  carrinho.esvaziar();
+  carrinho.limpar();
+  atualizarInterfaceCarrinho();
   fecharCarrinho();
-  atualizarInterface();
 }
 
-searchInput.addEventListener("input", function (evento) {
-  termoBusca = evento.target.value;
+function abrirCarrinho() {
+  document.getElementById("painel-carrinho").classList.add("aberto");
+  document.getElementById("overlay").classList.add("visivel");
+}
+
+function fecharCarrinho() {
+  document.getElementById("painel-carrinho").classList.remove("aberto");
+  document.getElementById("overlay").classList.remove("visivel");
+}
+
+function configurarEventos() {
+  document.getElementById("botao-carrinho").addEventListener("click", abrirCarrinho);
+  document.getElementById("fechar-carrinho").addEventListener("click", fecharCarrinho);
+  document.getElementById("overlay").addEventListener("click", fecharCarrinho);
+  document.getElementById("botao-finalizar").addEventListener("click", finalizarCompra);
+  document.getElementById("fechar-modal").addEventListener("click", () => {
+    document.getElementById("modal-sucesso").classList.remove("visivel");
+  });
+
+  document.getElementById("campo-busca").addEventListener("input", (evento) => {
+    termoBusca = evento.target.value;
+    renderizarProdutos();
+  });
+
+  document.getElementById("ordenar-produtos").addEventListener("change", (evento) => {
+    criterioOrdenacao = evento.target.value;
+    renderizarProdutos();
+  });
+
+  document.getElementById("botao-cupom").addEventListener("click", aplicarCupom);
+  document.getElementById("campo-cupom").addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter") {
+      aplicarCupom();
+    }
+  });
+}
+
+function iniciar() {
+  restaurarCarrinho();
+  renderizarCategorias();
   renderizarProdutos();
-});
+  atualizarInterfaceCarrinho();
+  configurarEventos();
+}
 
-cartBtn.addEventListener("click", abrirCarrinho);
-closeCart.addEventListener("click", fecharCarrinho);
-cartOverlay.addEventListener("click", function (evento) {
-  if (evento.target === cartOverlay) {
-    fecharCarrinho();
-  }
-});
-
-checkoutBtn.addEventListener("click", finalizarCompra);
-
-closeSuccess.addEventListener("click", function () {
-  successOverlay.classList.remove("open");
-});
-
-renderizarCategorias();
-atualizarInterface();
+iniciar();
