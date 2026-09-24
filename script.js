@@ -147,12 +147,12 @@ class Carrinho {
 }
 
 const produtos = [
-  new Produto(1, "Notebook Gamer Pro", "Informática", 4500.00, 5, "images/notebook.jpg"),
-  new Produto(2, "Mouse Gamer RGB", "Informática", 150.00, 20, "images/mouse.jpg"),
-  new Produto(3, "Console X-Play", "Games", 3000.00, 0, "images/console.jpg"),
-  new Produto(4, "Controle Sem Fio", "Games", 250.00, 15, "images/controle.jpg"),
-  new Produto(5, "Headset Gamer", "Acessórios", 350.00, 10, "images/headset.jpg"),
-  new Produto(6, "Cadeira Gamer", "Acessórios", 1200.00, 3, "images/cadeira.jpg"),
+  new Produto(1, "Notebook Gamer Pro", "Informática", 4500.00, 5, "notebook.jpg"),
+  new Produto(2, "Mouse Gamer RGB", "Informática", 150.00, 20, "mouse.jpg"),
+  new Produto(3, "Console X-Play", "Games", 3000.00, 0, "console.jpg"),
+  new Produto(4, "Controle Sem Fio", "Games", 250.00, 15, "controle.jpg"),
+  new Produto(5, "Headset Gamer", "Acessórios", 350.00, 10, "headset.jpg"),
+  new Produto(6, "Cadeira Gamer", "Acessórios", 1200.00, 3, "cadeira.jpg"),
 ];
 
 const carrinho = new Carrinho();
