@@ -1,93 +1,124 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NivoraHQ</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechNova Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <span class="brand-mark">N</span>
-    <div class="brand-text">
-      <h1>NivoraHQ</h1>
-      <p>clássicos sombrios, histórias que marcaram</p>
+  <header class="cabecalho">
+    <div class="cabecalho-conteudo">
+      <div class="marca">
+        <span class="marca-simbolo">&lt;/&gt;</span>
+        <span class="marca-nome">TechNova</span>
+      </div>
+      <button id="botao-carrinho" class="botao-carrinho">
+        Carrinho <span id="contador-carrinho">0</span>
+      </button>
     </div>
-  </div>
-  <button class="cart-btn" id="cartBtn">
-    Carrinho
-    <span class="cart-count" id="cartCount">0</span>
-  </button>
-</header>
+  </header>
 
-<section class="hero">
-  <h2>Histórias que moldaram os quadrinhos.</h2>
-  <p>Uma seleção enxuta de clássicos de DC, Vertigo, Image e Dark Horse — obras que redefiniram o que uma HQ pode ser. Ache, adicione, finalize.</p>
-</section>
+  <section class="hero">
+    <div class="hero-conteudo">
+      <h1>Equipamento que aguenta<br>o replay.</h1>
+      <div class="hero-linha"></div>
+      <p class="hero-texto">Notebooks, periféricos e acessórios para quem joga e trabalha sério — sem enrolação, com estoque real e preço claro.</p>
+      <div class="hero-estatisticas">
+        <div class="estatistica">
+          <span class="estatistica-numero">6</span>
+          <span class="estatistica-label">produtos no catálogo</span>
+        </div>
+        <div class="estatistica">
+          <span class="estatistica-numero">3</span>
+          <span class="estatistica-label">categorias</span>
+        </div>
+        <div class="estatistica">
+          <span class="estatistica-numero">10%</span>
+          <span class="estatistica-label">off acima de R$ 3.000</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<section class="controls">
-  <div class="search-wrap">
-    <input type="text" id="searchInput" placeholder="Buscar por título...">
-  </div>
-  <div class="categories" id="categoryButtons"></div>
-</section>
+  <main class="conteudo">
 
-<main>
-  <div id="emptySearch" class="empty-state hidden">
-    Nenhuma HQ encontrada com esse nome. Tenta outro título.
-  </div>
-  <section class="product-grid" id="productGrid"></section>
-</main>
+    <section class="filtros">
+      <div class="filtros-linha">
+        <input type="text" id="campo-busca" placeholder="Buscar produto pelo nome..." />
+        <select id="ordenar-produtos" class="select-ordenar">
+          <option value="relevancia">Relevância</option>
+          <option value="menor-preco">Menor preço</option>
+          <option value="maior-preco">Maior preço</option>
+          <option value="nome">Nome (A-Z)</option>
+        </select>
+      </div>
+      <div class="categorias" id="lista-categorias"></div>
+    </section>
 
-<div class="cart-overlay" id="cartOverlay">
-  <aside class="cart-panel">
-    <div class="cart-header">
-      <h3>Seu carrinho</h3>
-      <button class="close-btn" id="closeCart">fechar</button>
+    <section id="mensagem-busca" class="mensagem-busca"></section>
+
+    <section class="produtos" id="lista-produtos"></section>
+
+  </main>
+
+  <footer class="rodape">
+    <p>TechNova Store — projeto acadêmico de Programação para Web, 2026.</p>
+  </footer>
+
+  <div id="overlay" class="overlay"></div>
+
+  <div id="toast" class="toast"></div>
+
+  <aside id="painel-carrinho" class="painel-carrinho">
+    <div class="painel-cabecalho">
+      <h2>Seu pedido</h2>
+      <button id="fechar-carrinho" class="fechar">&times;</button>
     </div>
 
-    <div id="cartEmptyMsg" class="cart-empty hidden">
-      Seu carrinho está vazio. Bora escolher uma HQ.
-    </div>
+    <div id="itens-carrinho" class="itens-carrinho"></div>
 
-    <div class="cart-items" id="cartItems"></div>
-
-    <div class="cart-summary">
-      <div class="summary-row">
+    <div class="resumo-carrinho">
+      <div class="barra-desconto-wrap">
+        <div class="barra-desconto"><div id="barra-desconto-preenchimento" class="barra-desconto-preenchimento"></div></div>
+        <p id="mensagem-desconto" class="mensagem-desconto"></p>
+      </div>
+      <div class="linha-resumo">
         <span>Itens</span>
-        <span id="summaryQtd">0</span>
+        <span id="qtd-itens">0</span>
       </div>
-      <div class="summary-row">
+      <div class="linha-resumo">
         <span>Subtotal</span>
-        <span id="summarySubtotal">R$ 0,00</span>
+        <span id="valor-subtotal">R$ 0,00</span>
       </div>
-      <div class="summary-row discount-row" id="discountRow">
+      <div class="cupom-linha">
+        <input type="text" id="campo-cupom" placeholder="Cupom de desconto" />
+        <button id="botao-cupom" class="botao-cupom">Aplicar</button>
+      </div>
+      <div class="linha-resumo">
         <span>Desconto</span>
-        <span id="summaryDiscount">- R$ 0,00</span>
+        <span id="valor-desconto">R$ 0,00</span>
       </div>
-      <div class="summary-row total-row">
+      <div class="linha-resumo total">
         <span>Total</span>
-        <span id="summaryTotal">R$ 0,00</span>
+        <span id="valor-total">R$ 0,00</span>
       </div>
-      <p class="discount-hint" id="discountHint"></p>
-      <button class="checkout-btn" id="checkoutBtn">Finalizar compra</button>
+      <button id="botao-finalizar" class="botao-finalizar">Finalizar compra</button>
     </div>
   </aside>
-</div>
 
-<div class="modal-overlay" id="successOverlay">
-  <div class="success-modal">
-    <span class="success-mark">POW!</span>
-    <h3>Compra concluída com sucesso</h3>
-    <p id="successDetails"></p>
-    <button class="close-btn solid" id="closeSuccess">continuar comprando</button>
+  <div id="modal-sucesso" class="modal">
+    <div class="modal-conteudo">
+      <h2>Pedido confirmado</h2>
+      <div id="resumo-final"></div>
+      <button id="fechar-modal" class="botao-finalizar">Fechar</button>
+    </div>
   </div>
-</div>
 
-<script src="js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
