@@ -66,16 +66,17 @@ Não há dependências externas além das fontes do Google Fonts — o projeto r
 
 ```
 Tech-Nova/
-├── index.html          # Estrutura da página (header, hero, catálogo, carrinho)
-├── style.css           # Tema visual, layout e responsividade
-├── script.js           # Classes de domínio e toda a lógica da loja
-├── notebook.jpg
-├── mouse.jpg
-├── console.jpg
-├── controle.jpg
-├── headset.jpg
-├── cadeira.jpg
-└── README.md
+├── index.html       # Estrutura da página (header, hero, catálogo, carrinho)
+├── README.md
+├── css/style.css    # Tema visual, layout e responsividade
+├── js/script.js     # Classes de domínio e toda a lógica da loja
+└── images/
+    ├── notebook.jpg
+    ├── mouse.jpg
+    ├── console.jpg
+    ├── controle.jpg
+    ├── headset.jpg
+    └── cadeira.jpg
 ```
 
 ## - Como rodar localmente
