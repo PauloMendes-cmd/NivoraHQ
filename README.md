@@ -16,7 +16,7 @@ Loja virtual de tecnologia e periféricos gamer — catálogo, carrinho, cupons 
 </div>
 
 ---
-## 👥 Integrantes - Grupo 8
+## - Integrantes - Grupo 8
 - PAULO VITOR LUCENA MENDES
 - JAYME BERNARDINO DA SILVA NETO
 - VALTER JUNIO LOPES XAVIER
@@ -25,33 +25,33 @@ Loja virtual de tecnologia e periféricos gamer — catálogo, carrinho, cupons 
 - VINICIUS DA SILVA ALVES
 
 
-## 📖 Sobre o projeto
+## - Sobre o projeto
 
 **TechNova Store** é uma loja virtual fictícia focada em notebooks, periféricos e acessórios gamer. O projeto simula uma experiência de e-commerce completa — busca, filtros, ordenação, carrinho persistente e cupom de desconto — sem depender de nenhum framework ou backend: é JavaScript puro manipulando o DOM, com o "banco de dados" de produtos vivendo diretamente no código.
 
 > Projeto acadêmico da disciplina de Programação para Web (2026).
 
-## ✨ Funcionalidades
+## - Funcionalidades
 
-- 🛒 **Carrinho de compras completo** — adicionar, aumentar/diminuir quantidade e remover itens, com validação de estoque em tempo real
-- 🔍 **Busca por nome** de produto, em tempo real
-- 🏷️ **Filtro por categoria** (Informática, Games, Acessórios)
-- ↕️ **Ordenação** por relevância, menor preço, maior preço ou nome (A–Z)
-- 💸 **Descontos automáticos**:
+- - **Carrinho de compras completo** — adicionar, aumentar/diminuir quantidade e remover itens, com validação de estoque em tempo real
+- - **Busca por nome** de produto, em tempo real
+- - **Filtro por categoria** (Informática, Games, Acessórios)
+- - **Ordenação** por relevância, menor preço, maior preço ou nome (A–Z)
+- - **Descontos automáticos**:
   - 10% de desconto no subtotal a partir de **R$ 3.000**, com barra de progresso mostrando quanto falta
   - Cupom `TECHNOVA5` para 5% de desconto adicional
-- 💾 **Persistência local** — o carrinho é salvo no `localStorage` e restaurado ao recarregar a página
-- 📦 **Controle de estoque** — produtos esgotados ficam desabilitados e itens com poucas unidades exibem o selo "Últimas X!"
-- 🔔 **Feedback visual** — toasts de sucesso/erro e modal de confirmação de pedido
-- 📱 **Interface responsiva** com identidade visual própria (tipografia *Chakra Petch* + *Inter* + *JetBrains Mono*)
+- - **Persistência local** — o carrinho é salvo no `localStorage` e restaurado ao recarregar a página
+- - **Controle de estoque** — produtos esgotados ficam desabilitados e itens com poucas unidades exibem o selo "Últimas X!"
+- - **Feedback visual** — toasts de sucesso/erro e modal de confirmação de pedido
+- - **Interface responsiva** com identidade visual própria (tipografia *Chakra Petch* + *Inter* + *JetBrains Mono*)
 
-## 🚀 Demo
+## - Demo
 
 A aplicação está publicada na Vercel:
 
-**🔗 [tech-nova-snowy.vercel.app](https://tech-nova-snowy.vercel.app/)**
+**- [tech-nova-snowy.vercel.app](https://tech-nova-snowy.vercel.app/)**
 
-## 🛠️ Tecnologias utilizadas
+## - Tecnologias utilizadas
 
 | Tecnologia | Uso |
 |---|---|
@@ -62,7 +62,7 @@ A aplicação está publicada na Vercel:
 
 Não há dependências externas além das fontes do Google Fonts — o projeto roda 100% no navegador, sem `build step`.
 
-## 📂 Estrutura do projeto
+## - Estrutura do projeto
 
 ```
 Tech-Nova/
@@ -78,7 +78,7 @@ Tech-Nova/
 └── README.md
 ```
 
-## ▶️ Como rodar localmente
+## - Como rodar localmente
 
 Por ser um projeto 100% estático, não é necessário instalar nada. Basta:
 
@@ -100,7 +100,7 @@ npx serve .
 python -m http.server 8080
 ```
 
-## 🧠 Arquitetura do código
+## - Arquitetura do código
 
 A lógica da loja é organizada em três classes principais dentro de `script.js`:
 
@@ -110,7 +110,7 @@ A lógica da loja é organizada em três classes principais dentro de `script.js
 
 O restante do arquivo cuida da renderização (cards de produto, painel do carrinho, categorias) e dos eventos de interface.
 
-## 🎟️ Cupom de teste
+## - Cupom de teste
 
 Para testar o desconto extra, use o cupom:
 
@@ -118,7 +118,7 @@ Para testar o desconto extra, use o cupom:
 TECHNOVA5
 ```
 
-## 📜 Licença
+## - Licença
 
 Este projeto não possui uma licença definida. Sinta-se à vontade para adicionar uma (MIT é uma boa escolha para projetos acadêmicos abertos).
 
