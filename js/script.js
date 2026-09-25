@@ -263,7 +263,7 @@ function criarCardProduto(produto, indice) {
 
   card.innerHTML = `
     <div class="card-imagem-wrap" data-iniciais="${obterIniciais(produto.nome)}">
-      <img class="card-imagem" src="${produto.imagem}" alt="${produto.nome}" loading="lazy" />
+      <img class="card-imagem" src="images/${produto.imagem}" alt="${produto.nome}" loading="lazy" />
       <span class="card-sku">${codigoFormatado}</span>
       ${!disponivel ? '<span class="card-selo-indisponivel">Esgotado</span>' : ""}
       ${estoqueBaixo ? `<span class="card-selo-baixo">Últimas ${produto.estoque}!</span>` : ""}
